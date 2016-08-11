@@ -2,15 +2,37 @@ import { Component, EventEmitter } from 'angular2/core';
 import { Review } from './review.model';
 
 @Component({
-  selector: "review-display",
+  selector: "review-details",
   inputs: ['review'],
   template: `
+    <h4>{{ review.specialty }}</h4>
+    <h4>{{ review.tastiness }}</h4>
+  `
+})
+
+export class ReviewDetailsComponent {
+  public review: Review;
+}
+
+//////////////////////////ReviewComponent/////////////////////
+@Component({
+  selector: "review-display",
+  inputs: ['review'],
+  directives: [ReviewDetailsComponent],
+  template: `
     <h3>{{ review.name }}</h3>
+    <div [hidden]="review.hidden">
+      <h4>{{ review.specialty }}</h4>
+      <h4>{{ review.tastiness }}</h4>
+    </div>
   `
 })
 
 export class ReviewComponent {
   public review: Review;
+  hide(){
+
+  }
 }
 
 //////////////////////ReviewListComponent////////////////
@@ -18,9 +40,10 @@ export class ReviewComponent {
   selector: 'review-list',
   inputs: ['reviewList'],
   outputs: ['onReviewSelect'],
-  directives: [ReviewComponent],
+  directives: [ReviewComponent, ReviewDetailsComponent],
   template: `
-  <review-display *ngFor="#currentReview of reviewList" (click)="reviewClicked(currentReview)" [class.selected]="currentReview === selectedReview" [review]="currentReview"></review-display>
+  <review-display *ngFor="#currentReview of reviewList" (click)="reviewClicked(currentReview)" [class.selected]="currentReview === selectedReview" [review]="currentReview">
+  </review-display>
   `
 })
 
@@ -35,6 +58,12 @@ export class ReviewListComponent {
   reviewClicked(clickedReview: Review): void {
     console.log('child', clickedReview);
     this.selectedReview = clickedReview;
+    if (clickedReview.hidden) {
+      clickedReview.hidden = false;
+    }
+    else {
+      clickedReview.hidden = true;
+    }
     this.onReviewSelect.emit(clickedReview);
   }
 }

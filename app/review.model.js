@@ -11,6 +11,7 @@ System.register([], function(exports_1, context_1) {
                     this.specialty = specialty;
                     this.tastiness = tastiness;
                     this.id = id;
+                    this.hidden = true;
                     this.approved = false;
                 }
                 return Review;

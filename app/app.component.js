@@ -11,7 +11,7 @@ System.register(['angular2/core', './review.model'], function(exports_1, context
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, review_model_1;
-    var ReviewComponent, ReviewListComponent, AppComponent;
+    var ReviewDetailsComponent, ReviewComponent, ReviewListComponent, AppComponent;
     return {
         setters:[
             function (core_1_1) {
@@ -21,14 +21,32 @@ System.register(['angular2/core', './review.model'], function(exports_1, context
                 review_model_1 = review_model_1_1;
             }],
         execute: function() {
+            ReviewDetailsComponent = (function () {
+                function ReviewDetailsComponent() {
+                }
+                ReviewDetailsComponent = __decorate([
+                    core_1.Component({
+                        selector: "review-details",
+                        inputs: ['review'],
+                        template: "\n    <h4>{{ review.specialty }}</h4>\n    <h4>{{ review.tastiness }}</h4>\n  "
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], ReviewDetailsComponent);
+                return ReviewDetailsComponent;
+            }());
+            exports_1("ReviewDetailsComponent", ReviewDetailsComponent);
+            //////////////////////////ReviewComponent/////////////////////
             ReviewComponent = (function () {
                 function ReviewComponent() {
                 }
+                ReviewComponent.prototype.hide = function () {
+                };
                 ReviewComponent = __decorate([
                     core_1.Component({
                         selector: "review-display",
                         inputs: ['review'],
-                        template: "\n    <h3>{{ review.name }}</h3>\n  "
+                        directives: [ReviewDetailsComponent],
+                        template: "\n    <h3>{{ review.name }}</h3>\n    <div [hidden]=\"review.hidden\">\n      <h4>{{ review.specialty }}</h4>\n      <h4>{{ review.tastiness }}</h4>\n    </div>\n  "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], ReviewComponent);
@@ -43,6 +61,12 @@ System.register(['angular2/core', './review.model'], function(exports_1, context
                 ReviewListComponent.prototype.reviewClicked = function (clickedReview) {
                     console.log('child', clickedReview);
                     this.selectedReview = clickedReview;
+                    if (clickedReview.hidden) {
+                        clickedReview.hidden = false;
+                    }
+                    else {
+                        clickedReview.hidden = true;
+                    }
                     this.onReviewSelect.emit(clickedReview);
                 };
                 ReviewListComponent = __decorate([
@@ -50,8 +74,8 @@ System.register(['angular2/core', './review.model'], function(exports_1, context
                         selector: 'review-list',
                         inputs: ['reviewList'],
                         outputs: ['onReviewSelect'],
-                        directives: [ReviewComponent],
-                        template: "\n  <review-display *ngFor=\"#currentReview of reviewList\" (click)=\"reviewClicked(currentReview)\" [class.selected]=\"currentReview === selectedReview\" [review]=\"currentReview\"></review-display>\n  "
+                        directives: [ReviewComponent, ReviewDetailsComponent],
+                        template: "\n  <review-display *ngFor=\"#currentReview of reviewList\" (click)=\"reviewClicked(currentReview)\" [class.selected]=\"currentReview === selectedReview\" [review]=\"currentReview\">\n  </review-display>\n  "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], ReviewListComponent);
